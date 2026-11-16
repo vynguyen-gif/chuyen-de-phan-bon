@@ -2,8 +2,8 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chuyên Đề 1: Phân Bón - Website Luyện Tập Trắc Nghiệm Tương Tác</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>Chuyên Đề 1: Phân Bón - GV Nguyễn Vỹ</title>
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -34,12 +34,24 @@
     }
   </script>
   <style>
+    html {
+      scroll-behavior: smooth;
+      -webkit-tap-highlight-color: transparent;
+    }
     @media print {
       .no-print { display: none !important; }
       body { background: white !important; color: black !important; }
       .print-full { width: 100% !important; margin: 0 !important; padding: 0 !important; }
     }
-    /* Smooth custom scrollbars */
+    /* Hide scrollbar for clean horizontal nav on mobile */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    /* Custom scrollbars for desktop */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -79,63 +91,67 @@
           </div>
         </div>
 
-        <!-- Student worksheet info (auto saved) -->
-        <div class="bg-white/10 backdrop-blur-md rounded-2xl p-3 sm:p-4 border border-white/20 text-xs sm:text-sm grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 no-print">
+        <!-- Student worksheet info (auto saved, mobile optimized) -->
+        <div class="bg-white/10 backdrop-blur-md rounded-2xl p-3 sm:p-4 border border-white/20 text-xs sm:text-sm grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 w-full md:w-auto md:min-w-[420px] no-print">
           <div>
-            <label class="block text-emerald-200 text-[11px] font-semibold uppercase">Học sinh</label>
-            <input type="text" id="studentName" placeholder="Nhập họ và tên..." class="bg-black/20 text-white rounded-lg px-2.5 py-1.5 w-full placeholder:text-emerald-200/50 focus:outline-none focus:ring-1 focus:ring-emerald-300">
+            <label class="block text-emerald-200 text-[11px] font-bold uppercase tracking-wider mb-1">Học sinh</label>
+            <input type="text" id="studentName" placeholder="Nhập họ và tên..." class="bg-black/25 text-white rounded-xl px-3 py-2 w-full text-base sm:text-xs placeholder:text-emerald-200/50 focus:outline-none focus:ring-2 focus:ring-amber-300 border border-white/10">
           </div>
           <div>
-            <label class="block text-emerald-200 text-[11px] font-semibold uppercase">Lớp</label>
-            <input type="text" id="studentClass" placeholder="Ví dụ: 11A1, 12A..." class="bg-black/20 text-white rounded-lg px-2.5 py-1.5 w-full placeholder:text-emerald-200/50 focus:outline-none focus:ring-1 focus:ring-emerald-300">
+            <label class="block text-emerald-200 text-[11px] font-bold uppercase tracking-wider mb-1">Lớp</label>
+            <input type="text" id="studentClass" placeholder="Ví dụ: 11A1, 12A..." class="bg-black/25 text-white rounded-xl px-3 py-2 w-full text-base sm:text-xs placeholder:text-emerald-200/50 focus:outline-none focus:ring-2 focus:ring-amber-300 border border-white/10">
           </div>
           <div>
-            <label class="block text-emerald-200 text-[11px] font-semibold uppercase">Trường</label>
-            <input type="text" id="studentSchool" placeholder="Tên trường THPT..." class="bg-black/20 text-white rounded-lg px-2.5 py-1.5 w-full placeholder:text-emerald-200/50 focus:outline-none focus:ring-1 focus:ring-emerald-300">
+            <label class="block text-emerald-200 text-[11px] font-bold uppercase tracking-wider mb-1">Trường</label>
+            <input type="text" id="studentSchool" placeholder="Tên trường THPT..." class="bg-black/25 text-white rounded-xl px-3 py-2 w-full text-base sm:text-xs placeholder:text-emerald-200/50 focus:outline-none focus:ring-2 focus:ring-amber-300 border border-white/10">
           </div>
         </div>
       </div>
     </div>
   </header>
 
-  <!-- QUICK STATS BAR -->
-  <section class="bg-white border-b border-slate-200/90 shadow-sm no-print sticky top-0 z-40">
-    <div class="max-w-6xl mx-auto px-4 py-2.5 sm:px-6">
-      <div class="flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm">
-        <div class="flex items-center flex-wrap gap-4 sm:gap-6 font-semibold">
-          <div class="flex items-center gap-1.5 text-slate-700">
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-            Tổng câu: <span id="statTotalQuestions" class="font-bold text-slate-900">79</span>
+  <!-- QUICK STATS BAR (MOBILE & DESKTOP COMPACT) -->
+  <section class="bg-white/95 backdrop-blur border-b border-slate-200 shadow-sm no-print sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-3.5 py-2 sm:px-6">
+      <div class="flex items-center justify-between gap-2 text-xs sm:text-sm">
+        <div class="flex items-center gap-3 sm:gap-5 overflow-x-auto no-scrollbar py-0.5 font-semibold text-slate-700 shrink">
+          <div class="flex items-center gap-1.5 shrink-0">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span class="hidden sm:inline text-slate-500">Tổng:</span>
+            <span id="statTotalQuestions" class="font-bold text-slate-900">79</span> <span class="text-[11px] text-slate-400">câu</span>
           </div>
-          <div class="flex items-center gap-1.5 text-slate-700">
-            <span class="w-2.5 h-2.5 rounded-full bg-teal-500"></span>
-            Đã làm: <span id="statAnswered" class="font-bold text-slate-900">0</span>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <span class="w-2 h-2 rounded-full bg-teal-500"></span>
+            <span class="hidden sm:inline text-slate-500">Đã làm:</span>
+            <span id="statAnswered" class="font-bold text-slate-900">0</span>
           </div>
-          <div class="flex items-center gap-1.5 text-slate-700">
-            <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
-            Độ chính xác: <span id="statAccuracy" class="font-bold text-emerald-700">0%</span>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+            <span class="hidden sm:inline text-slate-500">Đúng:</span>
+            <span id="statAccuracy" class="font-bold text-emerald-700">0%</span>
           </div>
-          <div class="flex items-center gap-1.5 text-slate-700">
-            <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
-            Cần ôn lại: <span id="statMistakesCount" class="font-bold text-rose-600">0</span>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+            <span class="hidden sm:inline text-slate-500">Cần ôn:</span>
+            <span id="statMistakesCount" class="font-bold text-rose-600">0</span>
           </div>
         </div>
 
-        <div class="flex items-center gap-2">
-          <button onclick="toggleSound()" id="btnSoundToggle" class="px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-100 transition-colors">
-            🔊 Âm thanh: Bật
+        <div class="flex items-center gap-1.5 shrink-0">
+          <button onclick="toggleSound()" id="btnSoundToggle" class="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl border border-slate-200 text-[11px] sm:text-xs font-bold text-slate-700 hover:bg-slate-100 transition-colors">
+            🔊 Bật
           </button>
-          <button onclick="printTestSheet()" class="px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-100 transition-colors flex items-center gap-1">
-            🖨️ In đề
+          <button onclick="printTestSheet()" class="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl border border-slate-200 text-[11px] sm:text-xs font-bold text-slate-700 hover:bg-slate-100 transition-colors flex items-center gap-1">
+            🖨️ In
           </button>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- NAVIGATION TABS -->
-  <nav class="max-w-6xl mx-auto w-full px-4 pt-4 sm:px-6 no-print">
-    <div class="flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-slate-200">
+  <!-- NAVIGATION TABS (TOUCH-SCROLLABLE) -->
+  <nav class="max-w-6xl mx-auto w-full px-3 pt-3 sm:px-6 sm:pt-4 no-print">
+    <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-2 border-b border-slate-200">
       <button 
         data-tab="practice" 
         onclick="switchTab('practice')" 
@@ -195,8 +211,33 @@
     </div>
   </footer>
 
+  <!-- Floating Back to Top Button (Mobile & Desktop) -->
+  <button 
+    id="btnBackToTop" 
+    onclick="window.scrollTo({top: 0, behavior: 'smooth'})" 
+    title="Lên đầu trang"
+    class="fixed bottom-5 right-5 z-50 p-3.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-2xl shadow-xl border border-emerald-500/30 transition-all opacity-0 pointer-events-none translate-y-3 flex items-center justify-center no-print"
+  >
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+  </button>
+
   <!-- Scripts -->
   <script src="data.js"></script>
   <script src="app.js"></script>
+  <script>
+    // Back to top scroll listener
+    window.addEventListener('scroll', () => {
+      const btn = document.getElementById('btnBackToTop');
+      if (btn) {
+        if (window.scrollY > 350) {
+          btn.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-3');
+          btn.classList.add('opacity-100', 'translate-y-0');
+        } else {
+          btn.classList.add('opacity-0', 'pointer-events-none', 'translate-y-3');
+          btn.classList.remove('opacity-100', 'translate-y-0');
+        }
+      }
+    });
+  </script>
 </body>
 </html>

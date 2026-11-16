@@ -190,7 +190,7 @@ function createQuestionHTML(q, index, options = {}) {
   if (q.level === 'van_dung') levelBadgeColor = 'bg-amber-100 text-amber-800 border-amber-200';
 
   const optionsHTML = q.options.map((optText, optIdx) => {
-    let btnClass = "w-full text-left p-3.5 rounded-xl border-2 transition-all flex items-start gap-3 relative ";
+    let btnClass = "w-full text-left p-3 sm:p-3.5 rounded-xl border-2 transition-all flex items-start gap-3 relative touch-manipulation active:scale-[0.99] ";
     let iconClass = "inline-flex items-center justify-center w-7 h-7 rounded-lg font-bold text-sm shrink-0 border ";
     let iconContent = String.fromCharCode(65 + optIdx);
     
@@ -586,14 +586,19 @@ function startExam() {
   if (state.examTimerInterval) clearInterval(state.examTimerInterval);
   state.examTimerInterval = setInterval(() => {
     state.examTimeLeft--;
+    const mins = Math.floor(state.examTimeLeft / 60);
+    const secs = state.examTimeLeft % 60;
+    const timeStr = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    
     const timerElem = document.getElementById('examCountdown');
+    const mobileTimerElem = document.getElementById('mobileExamCountdown');
     if (timerElem) {
-      const mins = Math.floor(state.examTimeLeft / 60);
-      const secs = state.examTimeLeft % 60;
-      timerElem.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-      if (state.examTimeLeft < 180) {
-        timerElem.classList.add('text-rose-600', 'animate-pulse');
-      }
+      timerElem.innerText = timeStr;
+      if (state.examTimeLeft < 180) timerElem.classList.add('text-rose-600', 'animate-pulse');
+    }
+    if (mobileTimerElem) {
+      mobileTimerElem.innerText = timeStr;
+      if (state.examTimeLeft < 180) mobileTimerElem.classList.add('text-rose-600', 'animate-pulse');
     }
     if (state.examTimeLeft <= 0) {
       clearInterval(state.examTimerInterval);
@@ -642,22 +647,60 @@ function renderExamOngoing(container) {
   }).join('');
 
   container.innerHTML = `
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+    <!-- Mobile Floating Sticky Exam Bar -->
+    <div class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-4 py-2.5 shadow-2xl flex items-center justify-between gap-3">
+      <div class="flex items-center gap-1.5">
+        <span class="text-[11px] font-bold text-slate-500 uppercase">Còn:</span>
+        <span id="mobileExamCountdown" class="text-lg font-black text-emerald-700 font-mono tracking-tight">
+          ${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}
+        </span>
+      </div>
+      <div class="text-xs text-slate-600 font-medium">
+        <b class="text-emerald-700">${answeredCount}</b>/${total}
+      </div>
+      <div class="flex items-center gap-1.5">
+        <button onclick="toggleMobileMatrixModal()" class="px-2.5 py-1.5 bg-slate-100 active:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold transition-colors">
+          📋 Ma trận
+        </button>
+        <button onclick="submitExam(false)" class="px-3 py-1.5 bg-emerald-700 active:bg-emerald-800 text-white rounded-xl text-xs font-bold shadow transition-all">
+          Nộp bài
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Matrix Drawer Modal -->
+    <div id="mobileMatrixModal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div class="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl p-5 max-h-[80vh] flex flex-col shadow-2xl animate-in slide-in-from-bottom">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
+          <h4 class="font-bold text-slate-800 text-sm">Danh Sách Câu Hỏi (${answeredCount}/${total})</h4>
+          <button onclick="toggleMobileMatrixModal()" class="w-7 h-7 rounded-full bg-slate-100 text-slate-600 font-bold flex items-center justify-center text-sm">✕</button>
+        </div>
+        <div class="grid grid-cols-5 gap-2 overflow-y-auto p-1 max-h-72">
+          ${matrixHTML}
+        </div>
+        <div class="pt-3 mt-3 border-t border-slate-100 flex gap-2">
+          <button onclick="toggleMobileMatrixModal()" class="w-full py-2.5 bg-slate-100 text-slate-700 font-bold text-xs rounded-xl">Đóng</button>
+          <button onclick="toggleMobileMatrixModal(); submitExam(false);" class="w-full py-2.5 bg-emerald-700 text-white font-bold text-xs rounded-xl">Nộp Bài</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 pb-16 lg:pb-0">
       <!-- Questions column (3 cols) -->
-      <div class="lg:col-span-3 space-y-5">
+      <div class="lg:col-span-3 space-y-4 sm:space-y-5">
         ${questionsHTML}
         
-        <div class="p-6 bg-white rounded-2xl border border-slate-200 text-center">
-          <p class="text-slate-600 mb-4">Bạn đã làm <b>${answeredCount} / ${total}</b> câu. Bạn có muốn nộp bài thi ngay?</p>
-          <button onclick="submitExam(false)" class="px-8 py-3.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-base rounded-xl shadow-md transition-all">
+        <div class="p-5 sm:p-6 bg-white rounded-2xl border border-slate-200 text-center">
+          <p class="text-slate-600 text-sm mb-4">Bạn đã làm <b>${answeredCount} / ${total}</b> câu. Bạn có muốn nộp bài thi ngay?</p>
+          <button onclick="submitExam(false)" class="w-full sm:w-auto px-8 py-3.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-base rounded-xl shadow-md transition-all">
             📝 NỘP BÀI THI & XEM ĐIỂM
           </button>
         </div>
       </div>
 
-      <!-- Sticky Exam Panel (1 col) -->
-      <div class="lg:col-span-1">
-        <div class="sticky top-6 bg-white rounded-2xl p-5 border border-slate-200/80 shadow-md space-y-4">
+      <!-- Sticky Exam Panel on Desktop (1 col) -->
+      <div class="hidden lg:block lg:col-span-1">
+        <div class="sticky top-16 bg-white rounded-2xl p-5 border border-slate-200/80 shadow-md space-y-4">
           <div class="text-center pb-4 border-b border-slate-100">
             <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Thời gian còn lại</span>
             <div id="examCountdown" class="text-3xl font-black text-emerald-700 font-mono tracking-tight mt-1">
@@ -689,12 +732,23 @@ function renderExamOngoing(container) {
   `;
 }
 
+function toggleMobileMatrixModal() {
+  const modal = document.getElementById('mobileMatrixModal');
+  if (modal) {
+    modal.classList.toggle('hidden');
+  }
+}
+
 function selectExamAnswer(questionId, optIdx) {
   state.examAnswers[questionId] = optIdx;
   renderCurrentView();
 }
 
 function scrollToExamQuestion(elemId) {
+  const modal = document.getElementById('mobileMatrixModal');
+  if (modal && !modal.classList.contains('hidden')) {
+    modal.classList.add('hidden');
+  }
   const elem = document.getElementById(elemId);
   if (elem) elem.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
